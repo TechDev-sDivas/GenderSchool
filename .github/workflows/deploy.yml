@@ -48,5 +48,5 @@ jobs:
           env_vars: |
             SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY || 'django-insecure-default-key-cloudrun' }}
             DEBUG=False
-            ALLOWED_HOSTS=*
-            DATABASE_URL=sqlite:///db.sqlite3
+            ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS || '*' }}
+            DATABASE_URL=${{ secrets.DATABASE_URL || 'sqlite:///db.sqlite3' }}
