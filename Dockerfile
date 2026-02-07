@@ -1,5 +1,5 @@
 # Stage 1: Build Frontend
-FROM node:18-alpine as frontend-build
+FROM node:18-alpine AS frontend-build
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
@@ -32,9 +32,8 @@ COPY --from=frontend-build /app/frontend/dist/vite.svg /app/backend/static/
 WORKDIR /app/backend
 
 # Collect static files
-ENV SECRET_KEY=dummy_build_key
-ENV DATABASE_URL=sqlite:///db.sqlite3
-RUN python manage.py collectstatic --noinput
+# We use dummy values for build time only, they are not persisted in the final image ENV
+RUN SECRET_KEY=dummy_build_key DATABASE_URL=sqlite:///db.sqlite3 python manage.py collectstatic --noinput
 
 # Expose port
 EXPOSE 8080
