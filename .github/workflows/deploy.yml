@@ -46,7 +46,7 @@ jobs:
           region: ${{ env.REGION }}
           flags: '--allow-unauthenticated'
           env_vars: |
-            SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY || 'django-insecure-default-key-cloudrun' }}
+            SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY}}
             DEBUG=False
-            ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS || '*' }}
-            DATABASE_URL=${{ secrets.DATABASE_URL || 'sqlite:///db.sqlite3' }}
+            ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
