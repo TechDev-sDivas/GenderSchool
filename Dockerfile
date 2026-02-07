@@ -35,8 +35,12 @@ WORKDIR /app/backend
 # We use dummy values for build time only, they are not persisted in the final image ENV
 RUN SECRET_KEY=dummy_build_key DATABASE_URL=sqlite:///db.sqlite3 python manage.py collectstatic --noinput
 
+# Copy entrypoint script and make it executable
+COPY backend/entrypoint.sh /app/backend/entrypoint.sh
+RUN chmod +x /app/backend/entrypoint.sh
+
 # Expose port
 EXPOSE 8080
 
-# Run gunicorn
-CMD ["gunicorn", "school_project.wsgi:application", "--bind", "0.0.0.0:8080"]
+# Use entrypoint script to run migrations and start server
+ENTRYPOINT ["/app/backend/entrypoint.sh"]
