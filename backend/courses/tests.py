@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Course, Enrollment
 
+
 class CourseModelTest(TestCase):
     def setUp(self):
         self.instructor = User.objects.create_user(username='instructor', password='password')
