@@ -9,6 +9,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['photo', 'bio']
 
 
+
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(required=False)
 
@@ -82,6 +83,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             profile.save()
 
         return instance
+
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
