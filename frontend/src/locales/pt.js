@@ -69,5 +69,23 @@ export default {
     "enroll": "Matricular-se",
     "continue": "Continuar Estudando",
     "progress": "Progresso"
+  },
+  "profile": {
+    "title": "Editar Perfil",
+    "change_photo": "Alterar Foto",
+    "username": "Usuário",
+    "email": "Email",
+    "first_name": "Nome",
+    "last_name": "Sobrenome",
+    "bio": "Biografia",
+    "remove_photo": "Remover Foto",
+    "confirm_remove_photo": "Tem certeza que deseja remover sua foto?",
+    "photo_removed": "Foto removida com sucesso!"
+  },
+  "common": {
+    "save": "Salvar Alterações",
+    "saving": "Salvando...",
+    "saved": "Salvo com sucesso!",
+    "cancel": "Cancelar"
   }
 }

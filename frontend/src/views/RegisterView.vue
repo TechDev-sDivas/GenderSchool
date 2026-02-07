@@ -46,7 +46,7 @@ const handleRegister = async () => {
   error.value = '';
   success.value = '';
   try {
-    await axios.post('http://localhost:8000/api/register/', form.value);
+    await axios.post('/api/register/', form.value);
     success.value = t('register.success');
     setTimeout(() => {
         router.push('/login');

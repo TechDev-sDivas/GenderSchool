@@ -58,7 +58,7 @@ const fetchEnrollments = async () => {
     const token = localStorage.getItem('token');
     if (!token) return;
     
-    const response = await axios.get('http://localhost:8000/api/enrollments/', {
+    const response = await axios.get('/api/enrollments/', {
         headers: { 'Authorization': `Token ${token}` }
     });
     enrollments.value = response.data;

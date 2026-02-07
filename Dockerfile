@@ -28,6 +28,7 @@ RUN mkdir -p backend/static
 COPY --from=frontend-build /app/frontend/dist/index.html /app/backend/templates/index.html
 COPY --from=frontend-build /app/frontend/dist/assets /app/backend/static/assets
 COPY --from=frontend-build /app/frontend/dist/vite.svg /app/backend/static/
+COPY --from=frontend-build /app/frontend/dist/default-profile.svg /app/backend/static/
 
 WORKDIR /app/backend
 

@@ -6,9 +6,24 @@ from rest_framework.authtoken.models import Token
 from .models import Course, Enrollment
 from django.contrib.auth.models import User
 from .serializers import (
-    CourseSerializer, UserRegistrationSerializer, EnrollmentSerializer
+    CourseSerializer, UserRegistrationSerializer, EnrollmentSerializer,
+    UserSerializer, UserProfileUpdateSerializer
 )
 from django.db.models import Q
+
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return UserProfileUpdateSerializer
+        return UserSerializer
+
+    def get_object(self):
+        return self.request.user
 
 
 class UserRegistrationView(generics.CreateAPIView):

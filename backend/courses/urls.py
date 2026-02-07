@@ -1,7 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    CourseViewSet, CustomAuthToken, UserRegistrationView, EnrollmentViewSet
+    CourseViewSet, CustomAuthToken, UserRegistrationView, EnrollmentViewSet,
+    UserProfileView
 )
 
 router = DefaultRouter()
@@ -12,4 +13,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('login/', CustomAuthToken.as_view()),
     path('register/', UserRegistrationView.as_view()),
+    path('profile/', UserProfileView.as_view()),
 ]
