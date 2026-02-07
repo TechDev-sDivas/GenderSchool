@@ -7,7 +7,9 @@ from .models import Course, Enrollment
 
 class CourseModelTest(TestCase):
     def setUp(self):
-        self.instructor = User.objects.create_user(username='instructor', password='password')
+        self.instructor = User.objects.create_user(
+            username='instructor', password='password'
+        )
         self.course = Course.objects.create(
             title='Test Course',
             description='Test Description',
@@ -21,36 +23,52 @@ class CourseModelTest(TestCase):
         self.assertEqual(self.course.instructor.username, 'instructor')
         self.assertEqual(str(self.course), 'Test Course')
 
+
 class EnrollmentModelTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='student', password='password')
-        self.instructor = User.objects.create_user(username='instructor', password='password')
+        self.user = User.objects.create_user(
+            username='student', password='password'
+        )
+        self.instructor = User.objects.create_user(
+            username='instructor', password='password'
+        )
         self.course = Course.objects.create(
             title='Test Course',
             description='Test Description',
             price=10.00,
             instructor=self.instructor
         )
-        self.enrollment = Enrollment.objects.create(user=self.user, course=self.course)
+        self.enrollment = Enrollment.objects.create(
+            user=self.user, course=self.course
+        )
 
     def test_enrollment_creation(self):
         """Test if enrollment is created correctly"""
         self.assertEqual(self.enrollment.user.username, 'student')
         self.assertEqual(self.enrollment.course.title, 'Test Course')
         self.assertEqual(self.enrollment.progress, 0)
-        self.assertTrue(str(self.enrollment).startswith('student enrolled in Test Course'))
+        self.assertTrue(
+            str(self.enrollment).startswith('student enrolled in Test Course')
+        )
+
 
 class CourseAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.admin = User.objects.create_superuser(username='admin', password='password', email='admin@example.com')
-        self.student = User.objects.create_user(username='student', password='password', email='student@example.com')
+        self.admin = User.objects.create_superuser(
+            username='admin', password='password', email='admin@example.com'
+        )
+        self.student = User.objects.create_user(
+            username='student', password='password', email='student@example.com'
+        )
         self.course_data = {
             'title': 'New Course',
             'description': 'New Description',
             'price': 20.00
         }
-        self.instructor = User.objects.create_user(username='instructor', password='password')
+        self.instructor = User.objects.create_user(
+            username='instructor', password='password'
+        )
         self.course = Course.objects.create(
             title='Existing Course',
             description='Existing Description',
@@ -88,32 +106,43 @@ class CourseAPITest(TestCase):
         response = self.client.post(f'/api/courses/{self.course.id}/enroll/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Enrollment.objects.count(), 1)
-        
+
         # Test duplicate enrollment
         response = self.client.post(f'/api/courses/{self.course.id}/enroll/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'], 'already enrolled')
 
+
 class AuthAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(username='testuser', password='password', email='test@example.com')
+        self.user = User.objects.create_user(
+            username='testuser', password='password', email='test@example.com'
+        )
 
     def test_login_username(self):
         """Test login with username"""
-        response = self.client.post('/api/login/', {'username': 'testuser', 'password': 'password'})
+        response = self.client.post(
+            '/api/login/', {'username': 'testuser', 'password': 'password'}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('token', response.data)
 
     def test_login_email(self):
         """Test login with email"""
-        response = self.client.post('/api/login/', {'username': 'test@example.com', 'password': 'password'})
+        response = self.client.post(
+            '/api/login/',
+            {'username': 'test@example.com', 'password': 'password'}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('token', response.data)
 
     def test_login_invalid(self):
         """Test login with wrong password"""
-        response = self.client.post('/api/login/', {'username': 'testuser', 'password': 'wrongpassword'})
+        response = self.client.post(
+            '/api/login/',
+            {'username': 'testuser', 'password': 'wrongpassword'}
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_register_user(self):
