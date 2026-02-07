@@ -27,18 +27,16 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 
 const username = ref('');
 const password = ref('');
 const error = ref('');
-const router = useRouter();
 const { t } = useI18n();
 
 const handleLogin = async () => {
   try {
-    const response = await axios.post('http://localhost:8000/api/login/', {
+    const response = await axios.post('/api/login/', {
       username: username.value,
       password: password.value
     });

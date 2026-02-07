@@ -21,3 +21,7 @@ yarn-error.log*
 
 # Secrets
 credentials.json
+backend/.env
+backend/gcp-key.json
+run_local_docker.sh
+*.json

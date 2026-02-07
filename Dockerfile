@@ -1,5 +1,5 @@
 # Stage 1: Build Frontend
-FROM node:18-alpine as frontend-build
+FROM node:18-alpine AS frontend-build
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
@@ -28,16 +28,20 @@ RUN mkdir -p backend/static
 COPY --from=frontend-build /app/frontend/dist/index.html /app/backend/templates/index.html
 COPY --from=frontend-build /app/frontend/dist/assets /app/backend/static/assets
 COPY --from=frontend-build /app/frontend/dist/vite.svg /app/backend/static/
+COPY --from=frontend-build /app/frontend/dist/default-profile.svg /app/backend/static/
 
 WORKDIR /app/backend
 
 # Collect static files
-ENV SECRET_KEY=dummy_build_key
-ENV DATABASE_URL=sqlite:///db.sqlite3
-RUN python manage.py collectstatic --noinput
+# We use dummy values for build time only, they are not persisted in the final image ENV
+RUN SECRET_KEY=dummy_build_key DATABASE_URL=sqlite:///db.sqlite3 python manage.py collectstatic --noinput
+
+# Copy entrypoint script and make it executable
+COPY backend/entrypoint.sh /app/backend/entrypoint.sh
+RUN chmod +x /app/backend/entrypoint.sh
 
 # Expose port
 EXPOSE 8080
 
-# Run gunicorn
-CMD ["gunicorn", "school_project.wsgi:application", "--bind", "0.0.0.0:8080"]
+# Use entrypoint script to run migrations and start server
+ENTRYPOINT ["/app/backend/entrypoint.sh"]

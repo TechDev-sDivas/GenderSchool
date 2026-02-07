@@ -1,8 +1,30 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
 from rest_framework import status
+from django.core.files.uploadedfile import SimpleUploadedFile
 from .models import Course, Enrollment
+import tempfile
+
+
+@override_settings(MEDIA_ROOT=tempfile.gettempdir())
+class ProfileModelTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='profileuser', password='password'
+        )
+
+    def test_profile_creation(self):
+        """Test if profile is created automatically via signal"""
+        self.assertTrue(hasattr(self.user, 'profile'))
+        self.assertEqual(str(self.user.profile), "profileuser's Profile")
+
+    def test_profile_update(self):
+        """Test profile update"""
+        self.user.profile.bio = "Test Bio"
+        self.user.profile.save()
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.profile.bio, "Test Bio")
 
 
 class CourseModelTest(TestCase):
@@ -59,7 +81,8 @@ class CourseAPITest(TestCase):
             username='admin', password='password', email='admin@example.com'
         )
         self.student = User.objects.create_user(
-            username='student', password='password', email='student@example.com'
+            username='student', password='password',
+            email='student@example.com'
         )
         self.course_data = {
             'title': 'New Course',
@@ -145,6 +168,14 @@ class AuthAPITest(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_login_nonexistent(self):
+        """Test login with nonexistent user"""
+        response = self.client.post(
+            '/api/login/',
+            {'username': 'nouser', 'password': 'password'}
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_register_user(self):
         """Test user registration"""
         data = {
@@ -155,3 +186,62 @@ class AuthAPITest(TestCase):
         response = self.client.post('/api/register/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(User.objects.filter(username='newuser').exists())
+        # Check if profile was created
+        user = User.objects.get(username='newuser')
+        self.assertTrue(hasattr(user, 'profile'))
+
+
+@override_settings(MEDIA_ROOT=tempfile.gettempdir())
+class ProfileAPITest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(
+            username='profiletest', password='password',
+            email='profile@test.com'
+        )
+        self.client.force_authenticate(user=self.user)
+
+    def test_get_profile(self):
+        """Test retrieving user profile"""
+        response = self.client.get('/api/profile/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['username'], 'profiletest')
+        self.assertIn('profile', response.data)
+
+    def test_update_profile_bio(self):
+        """Test updating user bio"""
+        data = {'bio': 'Updated Bio'}
+        response = self.client.patch('/api/profile/', data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.profile.bio, 'Updated Bio')
+
+    def test_update_profile_photo(self):
+        """Test updating user photo"""
+        # Create a tiny 1x1 GIF (simplest valid image structure)
+        # GIF89a + Logical Screen Descriptor + Image Descriptor + Data
+        image_content = (
+            b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff'
+            b'\x00\x00\x00\x21\xf9\x04\x01\x00\x00\x00\x00\x2c\x00\x00\x00\x00'
+            b'\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3b'
+        )
+        image = SimpleUploadedFile(
+            "test_image.gif", image_content, content_type="image/gif"
+        )
+        data = {'photo': image}
+        response = self.client.patch(
+            '/api/profile/', data, format='multipart'
+        )
+        if response.status_code != 200:
+            print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.profile.photo)
+
+    def test_update_user_fields(self):
+        """Test updating standard user fields via profile endpoint"""
+        data = {'first_name': 'NewName'}
+        response = self.client.patch('/api/profile/', data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'NewName')

@@ -69,5 +69,23 @@ export default {
     "enroll": "Enroll Now",
     "continue": "Continue Learning",
     "progress": "Progress"
+  },
+  "profile": {
+    "title": "Edit Profile",
+    "change_photo": "Change Photo",
+    "username": "Username",
+    "email": "Email",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "bio": "Bio",
+    "remove_photo": "Remove Photo",
+    "confirm_remove_photo": "Are you sure you want to remove your photo?",
+    "photo_removed": "Photo removed successfully!"
+  },
+  "common": {
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "saved": "Saved successfully!",
+    "cancel": "Cancel"
   }
 }

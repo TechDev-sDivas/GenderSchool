@@ -7,3 +7,6 @@ dj-database-url
 gunicorn
 whitenoise
 coverage
+Pillow
+django-storages[google]
+google-cloud-storage

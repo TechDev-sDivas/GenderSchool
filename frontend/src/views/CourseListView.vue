@@ -87,7 +87,7 @@ const fetchCourses = async () => {
     if (token) {
         headers['Authorization'] = `Token ${token}`;
     }
-    const response = await axios.get('http://localhost:8000/api/courses/', { headers });
+    const response = await axios.get('/api/courses/', { headers });
     courses.value = response.data;
   } catch (err) {
     console.error('Error fetching courses:', err);
@@ -97,7 +97,7 @@ const fetchCourses = async () => {
 const createCourse = async () => {
   try {
     const token = localStorage.getItem('token');
-    await axios.post('http://localhost:8000/api/courses/', newCourse.value, {
+    await axios.post('/api/courses/', newCourse.value, {
       headers: {
         'Authorization': `Token ${token}`
       }
@@ -114,7 +114,7 @@ const createCourse = async () => {
 const enroll = async (courseId) => {
     try {
         const token = localStorage.getItem('token');
-        await axios.post(`http://localhost:8000/api/courses/${courseId}/enroll/`, {}, {
+        await axios.post(`/api/courses/${courseId}/enroll/`, {}, {
             headers: { 'Authorization': `Token ${token}` }
         });
         // Refresh list to show updated status

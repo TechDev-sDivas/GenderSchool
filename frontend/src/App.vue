@@ -52,7 +52,9 @@
                 </router-link>
              </template>
              <template v-else>
-                <span class="text-gray-700 mr-2 text-sm font-medium hidden md:block">{{ $t('nav.welcome') }}</span>
+                <router-link to="/profile" class="text-gray-700 mr-2 text-sm font-medium hidden md:block hover:text-purple-600 transition-colors cursor-pointer">
+                    {{ $t('nav.welcome') }}
+                </router-link>
                 <button @click="logout" class="text-gray-500 hover:text-red-600 text-sm font-medium transition-colors duration-200">
                   {{ $t('nav.logout') }}
                 </button>
