@@ -5,9 +5,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from .models import Course, Enrollment
 from django.contrib.auth.models import User
-from .serializers import CourseSerializer,
-                            EnrollmentSerializer,
-                        UserRegistrationSerializer
+from .serializers import CourseSerializer, UserSerializer, UserRegistrationSerializer, EnrollmentSerializer
 from django.db.models import Q
 
 class UserRegistrationView(generics.CreateAPIView):
