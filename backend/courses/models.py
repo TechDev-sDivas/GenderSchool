@@ -16,6 +16,37 @@ class Course(models.Model):
         return self.title
 
 
+class Module(models.Model):
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name='modules'
+    )
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.course.title} - {self.title}"
+
+
+class Lesson(models.Model):
+    module = models.ForeignKey(
+        Module, on_delete=models.CASCADE, related_name='lessons'
+    )
+    title = models.CharField(max_length=200)
+    content = models.TextField(help_text="Content in Markdown/Text")
+    video_url = models.URLField(blank=True, null=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.module.title} - {self.title}"
+
+
 class Enrollment(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='enrollments'
